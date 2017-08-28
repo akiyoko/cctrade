@@ -57,16 +57,27 @@ class MyListener(tweepy.StreamListener):
         if status_code == 420:
             return False
 
+    # See: https://stackoverflow.com/questions/14177327/tweepy-stops-after-a-few-hours
+    def on_disconnect(self, notice):
+        print('Got a disconnect signal with notice: {}'.format(notice))
+        logger.error('Got a disconnect signal with notice: {}'.format(notice))
+        return False
+
 
 @retry(wait_random_min=3000, wait_random_max=5000)
 def main():
     # Use CoinMarketCap JSON API
     # Details at https://coinmarketcap.com/api/
-    res = requests.get('https://api.coinmarketcap.com/v1/ticker/')
-    resj = res.json()
-    print('Size of Symbols={}'.format(len(resj)))
-    symbols = [d['symbol'] for d in resj]
-    print('Symbols={}'.format(symbols))
+    try:
+        res = requests.get('https://api.coinmarketcap.com/v1/ticker/')
+        resj = res.json()
+        print('Size of Symbols={}'.format(len(resj)))
+        symbols = [d['symbol'] for d in resj]
+        print('Symbols={}'.format(symbols))
+    except Exception as e:
+        print('Got an error: {}'.format(str(e)))
+        logger.error('Got an error: {}'.format(str(e)))
+        raise
 
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)

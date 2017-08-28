@@ -78,6 +78,7 @@ class MyListener(tweepy.StreamListener):
         if str(status.user.id) in FOLLOW_IDS.keys():
             print('------------------------------')
             print('status={}'.format(status))
+            logger.debug('CC official tweeted. user.id={}'.format(status.user.id))
             symbol = FOLLOW_IDS[str(status.user.id)]
             is_retweet = hasattr(status, 'retweeted_status')
             is_reply = (status.in_reply_to_user_id is not None)
@@ -110,6 +111,12 @@ class MyListener(tweepy.StreamListener):
         if status_code == 420:
             return False
 
+    # See: https://stackoverflow.com/questions/14177327/tweepy-stops-after-a-few-hours
+    def on_disconnect(self, notice):
+        print('Got a disconnect signal with notice: {}'.format(notice))
+        logger.error('Got a disconnect signal with notice: {}'.format(notice))
+        return False
+
 
 @retry(wait_random_min=3000, wait_random_max=5000)
 def main():
@@ -118,7 +125,8 @@ def main():
 
     listener = MyListener()
     stream = tweepy.Stream(auth=auth, listener=listener, retry_count=20)
-    stream.filter(follow=FOLLOW_IDS.keys(), async=True)
+    # Do not add 'async' option for retry
+    stream.filter(follow=FOLLOW_IDS.keys())  # , async=True)
 
 
 if __name__ == "__main__":
