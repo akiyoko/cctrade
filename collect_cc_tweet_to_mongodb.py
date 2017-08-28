@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 
 import requests
 import tweepy
 from pymongo import MongoClient
-from requests.packages.urllib3.exceptions import TimeoutError
-from retry import retry
+from retrying import retry
 
 env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'env.py')
 if os.path.exists(env_file):
     exec(open(env_file, 'rb').read())
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename='cctrade.log',
+    format='%(asctime)s %(levelname)-7s %(message)s',
+)
+logger = logging.getLogger(__name__)
 
 NUMBER_OF_COINS = 200
 
@@ -46,11 +53,12 @@ class MyListener(tweepy.StreamListener):
 
     def on_error(self, status_code):
         print('Got an error with status code: {}'.format(status_code))
+        logger.error('Got an error with status code: {}'.format(status_code))
         if status_code == 420:
             return False
 
 
-@retry(TimeoutError, tries=3, delay=3)
+@retry(wait_random_min=3000, wait_random_max=5000)
 def main():
     # Use CoinMarketCap JSON API
     # Details at https://coinmarketcap.com/api/
@@ -69,7 +77,8 @@ def main():
     # Add top hundreds of coins to keywords
     keywords.extend(['${}'.format(symbol.lower()) for symbol in symbols[:NUMBER_OF_COINS]])
     print('keywords={}'.format(keywords))
-    stream.filter(track=keywords, async=True)
+    # Do not add 'async' option for retry
+    stream.filter(track=keywords)  # , async=True)
 
 
 if __name__ == "__main__":

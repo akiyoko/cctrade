@@ -22,8 +22,8 @@ def get_chart_data(currency_pair, minutes=5, ticks=12*24):
     # print("now={}".format(now))
     # current_datetime = datetime.fromtimestamp(now)
     # print("datetime={}".format(datetime.fromtimestamp(now).strftime('%Y-%m-%d %H:%M:%S')))
-    candlestick_period = polo.MINUTE * minutes
-    c = polo.returnChartData(currency_pair, period=candlestick_period, start=now - candlestick_period * ticks)
+    candlestick_interval = polo.MINUTE * minutes
+    c = polo.returnChartData(currency_pair, period=candlestick_interval, start=now - candlestick_interval * ticks)
 
     # print('c={}'.format(c))
     df = pd.DataFrame(c)
@@ -54,7 +54,7 @@ def get_chart_data(currency_pair, minutes=5, ticks=12*24):
     # print("highest_price={}".format(highest_price))
     # print("highest_price.__class__={}".format(highest_price.__class__))
     # print('df["high"].max()={}'.format(df['high'].max()))
-    # df_sliced = df[(datetime.fromtimestamp(now - candlestick_period * 5) <= df.index)]
+    # df_sliced = df[(datetime.fromtimestamp(now - candlestick_interval * 5) <= df.index)]
     # print('df_sliced={}'.format(df_sliced))
     # print('size of df_sliced={}'.format(len(df_sliced)))
     df_latest = df.tail(1)

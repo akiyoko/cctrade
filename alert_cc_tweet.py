@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import textwrap
 from datetime import datetime, timedelta
 
@@ -7,11 +8,19 @@ from pymongo import MongoClient, DESCENDING
 
 from email_client import EmailClient
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename='cctrade.log',
+    format='%(asctime)s %(levelname)-7s %(message)s',
+)
+logger = logging.getLogger(__name__)
+
 INTERVAL_MINUTES = 30
 SYMBOL_DISPLAY_SIZE = 50
 HASHTAG_DISPLAY_SIZE = 50
 
-if __name__ == "__main__":
+
+def main():
     now = datetime.now()
 
     # Symbols
@@ -65,3 +74,7 @@ if __name__ == "__main__":
 
     email_client = EmailClient()
     email_client.send_test_email(u'CC Tweet Summary', body)
+
+
+if __name__ == "__main__":
+    main()
