@@ -2,7 +2,7 @@
 
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from pprint import pprint
 
 import requests
@@ -24,6 +24,8 @@ NUMBER_OF_SYMBOLS = 200
 
 @retry(wait_random_min=3000, wait_random_max=5000)
 def main():
+    now = datetime.now()
+
     # Get all markets
     res = requests.get('https://api.coinmarketcap.com/v1/ticker/')
     markets = res.json()
@@ -33,8 +35,8 @@ def main():
     markets.sort(key=lambda x: float(x['24h_volume_usd'] or 0), reverse=True)
     pprint(markets)
 
+    # Save market data to MongoDB
     collection = MongoClient().coinmarketcap['tickers']
-
     for market in markets[:NUMBER_OF_SYMBOLS]:
         market['last_updated'] = datetime.fromtimestamp(int(market['last_updated']))
         collection.update(
@@ -42,6 +44,9 @@ def main():
             market,
             upsert=True
         )
+
+    # Cleanup
+    collection.remove({'last_updated': {'$lt': now - timedelta(hours=24 * 10)}})
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from pprint import pprint
 
 import ccxt
@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    now = datetime.now()
+
     # Get markets
     exchange = ccxt.bittrex()
     markets = exchange.fetch_tickers()
@@ -42,6 +44,9 @@ def main():
     for coin in [bitcoin] + altcoins:
         coin['timestamp'] = datetime.fromtimestamp(coin['timestamp'] / 1000)
         collection.insert_one(coin)
+
+    # Cleanup
+    collection.remove({'last_updated': {'$lt': now - timedelta(hours=24 * 10)}})
 
 
 if __name__ == "__main__":
