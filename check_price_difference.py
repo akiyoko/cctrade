@@ -140,10 +140,10 @@ def main():
             symbol_text = textwrap.dedent(u"""
             {symbol} ({ex_count})
             --------------------
-            Buy  at : {min_ask_ex_name:10} {min_ask_ex_url}
             Sell at : {max_bid_ex_name:10} {max_bid_ex_url}
-            Ask     : {min_ask:.8f} ({min_ask_volume:.1f} {base_currency}/day)
+            Buy  at : {min_ask_ex_name:10} {min_ask_ex_url}
             Bid     : {max_bid:.8f} ({max_bid_volume:.1f} {base_currency}/day)
+            Ask     : {min_ask:.8f} ({min_ask_volume:.1f} {base_currency}/day)
             Profit  : {profit:.8f} ({profit_rate:+.1%})
             """).format(
                 symbol=symbol,

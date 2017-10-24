@@ -32,8 +32,8 @@ def main():
     pprint(bitcoin)
     # Altcoins
     altcoins = [dict(v, symbol=k.split('/')[0]) for k, v in markets.items() if '/BTC' in k]
-    # Sort by baseVolume (Note: baseVolume might be None, so 'or 0')
-    altcoins.sort(key=lambda x: float(x['baseVolume'] or 0), reverse=True)
+    # Sort by quoteVolume (Note: quoteVolume might be None, so 'or 0')
+    altcoins.sort(key=lambda x: float(x['quoteVolume'] or 0), reverse=True)
     pprint(altcoins)
     print('Number of altcoins={}'.format(len(altcoins)))
     print([x['symbol'] for x in altcoins])

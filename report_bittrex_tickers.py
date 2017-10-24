@@ -28,7 +28,7 @@ pd.set_option('display.max_rows', 20)
 pd.set_option('display.width', 1000)
 
 DISPLAY_NUMBER_OF_ALTCOINS = 50  # TODO
-TARGET_MINUTES = 7 * 24 * 60  # TODO
+TARGET_MINUTES = 10 * 24 * 60  # TODO
 COMPARE_TICKS = 5
 MINUTES_PER_TICK = 5  # Interval time between tickers (DO NOT CHANGE)
 ROLLING_WINDOW = 50  # (DO NOT CHANGE)
@@ -81,7 +81,7 @@ def main():
     # Altcoins
     altcoins = [dict(v, symbol=k.split('/')[0]) for k, v in markets.items() if '/BTC' in k]
     # Sort by baseVolume (Note: baseVolume might be None, so 'or 0')
-    altcoins.sort(key=lambda x: float(x['baseVolume'] or 0), reverse=True)
+    altcoins.sort(key=lambda x: float(x['quoteVolume'] or 0), reverse=True)
     print('Number of altcoins={}'.format(len(altcoins)))
     print([x['symbol'] for x in altcoins])
 
