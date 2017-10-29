@@ -28,7 +28,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 BASE_CURRENCY = 'BTC'
 DISPLAY_NUMBER_OF_ALTCOINS = 100  # TODO
-MIN_VOLUME = 1
+MIN_VOLUME = 1  # TODO
 EXCHANGES = [
     # # 1. Bitfinex (sometimes raises json.decoder.JSONDecodeError)
     # (ccxt.bitfinex({
@@ -70,6 +70,8 @@ EXCHANGES = [
     (ccxt.liqui(), 'https://liqui.io/#/exchange/{0}_{1}'),
     # # 26. OKEx
     # (ccxt.okex(), 'https://www.okex.com/'),
+    # 43. Tidex
+    (ccxt.tidex(), 'https://tidex.com/exchange/{0}/{1}'),
     # 52. Cryptopia
     (ccxt.cryptopia(), 'https://www.cryptopia.co.nz/Exchange/?market={0}_{1}'),
 ]
