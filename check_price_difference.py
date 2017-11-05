@@ -29,6 +29,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 BASE_CURRENCY = 'BTC'
 DISPLAY_NUMBER_OF_ALTCOINS = 100  # TODO
 MIN_VOLUME = 1  # TODO
+PROFIT_RATE_THRESHOLD = 1.0 / 100  # TODO: ex) 0.01 = 1%
 EXCHANGES = [
     # # 1. Bitfinex (sometimes raises json.decoder.JSONDecodeError)
     # (ccxt.bitfinex({
@@ -138,7 +139,7 @@ def main():
 
         profit = max_bid - min_ask
         profit_rate = (profit / min_ask) if min_ask != 0 else 0  # TODO: else float('inf') ?
-        if profit > 0:
+        if profit_rate >= PROFIT_RATE_THRESHOLD:
             symbol_text = textwrap.dedent(u"""
             {symbol} ({ex_count})
             --------------------
