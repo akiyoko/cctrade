@@ -11,7 +11,7 @@ if os.path.exists(env_file):
     exec(open(env_file, 'rb').read())
 
 
-def create_exchange(exchange_id):
+def create_crypto_exchange(exchange_id):
     api_key = None
     api_secret = None
     try:
@@ -31,6 +31,21 @@ def create_exchange(exchange_id):
     return ex
 
 
+def get_crypto_ticker(exchange_id, currency_pair):
+    """
+    Get ticker from exchange
+
+    :param exchange_id: id of exchange market
+                        ex) 'coinmarketcap', 'bittrex'
+                        cf) https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets
+    :param currency_pair: ex) 'BTC/USD'
+    :return:
+    """
+    ex = create_crypto_exchange(exchange_id)
+    ticker = ex.fetch_ticker(currency_pair)
+    return ticker
+
+
 def save_ticker_to_mongo(exchange_id, currency_pair):
     """
     :param exchange_id: id of exchange market
@@ -39,10 +54,8 @@ def save_ticker_to_mongo(exchange_id, currency_pair):
     :param currency_pair: ex) 'BTC/USD'
     :return:
     """
-    ex = create_exchange(exchange_id)
-
     # Get ticker from exchange
-    ticker = ex.fetch_ticker(currency_pair)
+    ticker = get_crypto_ticker(exchange_id, currency_pair)
 
     # Save data into MongoDB
     collection = MongoClient()['tickers'][exchange_id]
@@ -58,11 +71,8 @@ def save_tickers_to_mongo_by_partial_currency_pair(exchange_id, partial_currency
     :param partial_currency_pair: ex) '/JPY'
     :return:
     """
-    ex = create_exchange(exchange_id)
-
     # Get symbols
-    print(ex.fetch_markets())
-    print([m['symbol'] for m in ex.fetch_markets()])
+    ex = create_crypto_exchange(exchange_id)
     currency_pairs = [m['symbol'] for m in ex.fetch_markets() if partial_currency_pair in m['symbol']]
 
     for currency_pair in currency_pairs:
